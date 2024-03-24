@@ -1,0 +1,5 @@
+env
+Dockerrun.aws.json
+.travis.yml
+.dockerignore
+docker-compose.yml

@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web
+  labels:
+    app: web
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: web
+  template:
+    metadata:
+      labels:
+        app: web
+    spec:
+      containers:
+      - name: web-deployment
+        image: ankush9844/user-wishlist:4.0
+        imagePullPolicy: "IfNotPresent"
+        ports:
+        - containerPort: 80
+        resources:
+          limits:
+            memory: "500Mi"
+            cpu: "400m"
+          requests:
+            memory: "200Mi"
+            cpu: "200m"
+        env:
+          - name: REDIS_HOST
+            value: redis-service.redis.svc.cluster.local
+          - name: REDIS_PORT
+            value: "6379"
+          - name: POSTGRES_HOST
+            value: postgres-service.ps.svc.cluster.local
+          - name: POSTGRES_PORT
+            value: "5432"
+          - name: POSTGRES_USER
+            value: postgres
+          - name: POSTGRES_PASSWORD
+            value: admin123
+          - name: POSTGRES_DB
+            value: mydb
+          
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: web-service
+  namespace: default
+spec:
+  selector:
+    app: web
+  type: ClusterIP
+  ports:
+  - protocol: TCP
+    port: 80 
+    targetPort: 80 
+    
